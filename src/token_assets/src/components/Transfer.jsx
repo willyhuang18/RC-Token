@@ -1,31 +1,21 @@
 import React, { useState } from "react";
-import { Principal } from '@dfinity/principal';
-import { canisterId, createActor } from "../../../declarations/token";
-import { AuthClient } from "@dfinity/auth-client";
+import { Principal } from "@dfinity/principal";
+import { token } from "../../../declarations/token";
 
 function Transfer() {
-
   const [recipientId, setId] = useState("");
   const [amount, setAmount] = useState("");
   const [isHidden, setHidden] = useState(true);
   const [feedback, setFeedback] = useState("");
   const [isDisabled, setDisable] = useState(false);
-  
+
   async function handleClick() {
     setHidden(true);
     setDisable(true);
     const recipient = Principal.fromText(recipientId);
     const amountToTransfer = Number(amount);
 
-    const authClient = await AuthClient.create();
-    const identity = await authClient.getIdentity();
-    const authenticatedCanister = createActor(canisterId, {
-      agentOptions: {
-        identity,
-      },
-    });
-
-    const result = await authenticatedCanister.transfer(recipient, amountToTransfer);
+    const result = await token.transfer(recipient, amountToTransfer);
     setFeedback(result);
     setHidden(false);
     setDisable(false);
@@ -61,11 +51,7 @@ function Transfer() {
           </ul>
         </fieldset>
         <p className="trade-buttons">
-          <button 
-          id="btn-transfer" 
-          onClick={handleClick} 
-          disabled={isDisabled}
-          >
+          <button id="btn-transfer" onClick={handleClick} disabled={isDisabled}>
             Transfer
           </button>
         </p>
